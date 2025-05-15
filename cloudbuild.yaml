@@ -84,12 +84,12 @@ options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
 substitutions:
-  _DEPLOY_REGION: us-west1
-  _AR_HOSTNAME: us-west1-docker.pkg.dev
+  _DEPLOY_REGION: us-central1
+  _AR_HOSTNAME: us-central1-docker.pkg.dev
   _PLATFORM: managed
-  _SERVICE_NAME: php-amarcord
+  _SERVICE_NAME: php-app-mod
   _EXECUTION_ENVIRONMENT: 'rgc/cloudbuild'
-  _GITHUB_USER: Friends-of-Ricc # change your your own, eg 'gregorio'
+  _GITHUB_USER: MirkoGilioli # change your your own, eg 'gregorio'
   _DEVFEST_CITY: modena
 tags:
   - gcp-cloud-build-deploy-cloud-run
