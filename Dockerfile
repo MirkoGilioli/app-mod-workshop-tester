@@ -1,30 +1,46 @@
-# Use an official PHP image with Apache
-FROM php:8.1-apache
+# Use the official PHP image: https://hub.docker.com/_/php
+FROM php:5.6-apache
 
-# Install required PHP extensions: PDO, MySQL, and other dependencies
-RUN docker-php-ext-install pdo pdo_mysql
+# Configure PHP for Cloud Run.
+# Precompile PHP code with opcache.
+# Install PHP's extension for MySQL
+RUN docker-php-ext-install -j "$(nproc)" opcache mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
 
-# Enable Apache mod_rewrite (if you plan on using URL rewriting later)
-RUN a2enmod rewrite
+RUN set -ex; \
+  { \
+    echo "; Cloud Run enforces memory & timeouts"; \
+    echo "memory_limit = -1"; \
+    echo "max_execution_time = 0"; \
+    echo "; File upload at Cloud Run network limit"; \
+    echo "upload_max_filesize = 32M"; \
+    echo "post_max_size = 32M"; \
+    echo "; Configure Opcache for Containers"; \
+    echo "opcache.enable = On"; \
+    echo "opcache.validate_timestamps = Off"; \
+    echo "; Configure Opcache Memory (Application-specific)"; \
+    echo "opcache.memory_consumption = 32"; \
+  } > "$PHP_INI_DIR/conf.d/cloud-run.ini"
 
-# Set working directory inside the container
+# Copy in custom code from the host machine.
 WORKDIR /var/www/html
 
-# Copy all application files into the container
-COPY . /var/www/html
+COPY . .
 
-# Set correct permissions for the uploads directory
-RUN chown -R www-data:www-data /var/www/html/uploads && \
-    chmod -R 755 /var/www/html/uploads
+# Setup the PORT environment variable in Apache configuration files: https://cloud.google.com/run/docs/reference/container-contract#port
+ENV PORT=8080
 
-# Expose port 80 for Apache
-EXPOSE 80
+# Tell Apache to use 8080 instead of 80.
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# Define environment variables for the database connection (can be overridden at runtime)
-ENV DB_HOST=localhost \
-    DB_NAME=image_catalog \
-    DB_USER=appmod-phpapp-user \
-    DB_PASS=_PWD_SCONOSCIUTA_
+# Note: This is quite insecure and opens security breaches. See last chapter for hardening ideas.
+# Uncomment at your own risk:
+RUN chmod 777 /var/www/html/uploads/
 
-# Start Apache in the foreground
-CMD ["apache2-foreground"]
+# Configure PHP for development.
+# Switch to the production php.ini for production operations.
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# https://github.com/docker-library/docs/blob/master/php/README.md#configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# Expose the port
+EXPOSE 8080
