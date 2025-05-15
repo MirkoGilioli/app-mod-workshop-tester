@@ -34,7 +34,7 @@ steps:
 #      - >-
 #        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,php-amarcord-github-user=$_GITHUB_USER,devfest-city=$_DEVFEST_CITY
       - '--region=$_DEPLOY_REGION'
-      - '--add-volume=name=php_uploads,type=cloud-storage,bucket=$_BUCKET'
+      - '--add-volume=name=gcs-1,type=cloud-storage,bucket=$_BUCKET'
       - '--add-volume-mount=volume=gcs-1,mount-path=$_MOUNT_PATH'
       - '--set-env-vars=DB_USER=$_DB_USER,DB_HOST=$_DB_HOST,DB_NAME=$_DB_NAME,DB_PASS=$_DB_PASS'
       - '--quiet'
