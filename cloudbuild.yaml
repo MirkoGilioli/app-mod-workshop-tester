@@ -28,53 +28,56 @@ steps:
       # - update
       - ${_SERVICE_NAME}-dev
       - '--platform=managed'
-      - '--port=80'
+      - '--port=8080'
       - >-
         --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
 #      - >-
 #        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,php-amarcord-github-user=$_GITHUB_USER,devfest-city=$_DEVFEST_CITY
       - '--region=$_DEPLOY_REGION'
+      - '--add-volume=name=php_uploads,type=cloud-storage,bucket=$_BUCKET'
+      - '--add-volume-mount=volume=gcs-1,mount-path=$_MOUNT_PATH'
+      - '--set-env-vars=DB_USER=$_DB_USER,DB_HOST=$_DB_HOST,DB_NAME=$_DB_NAME,DB_PASS=$_DB_PASS'
       - '--quiet'
       # Note to self: non va col services..
       - '--allow-unauthenticated'
     env: # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values=
     # copying RAILS_ENV approach.
     - PHP_ENV=development
-    - PORT=80
+    - PORT=8080
     - APP_NAME="A PHP Amarcord app deployed via Cloud Build to dev - break me as much as you want!"
     - DEBUG="true"
-    - CODE_REPO="https://github.com/${_GITHUB_USER/app-mod-workshop/"
+    - CODE_REPO="https://github.com/${_GITHUB_USER/app-mod-workshop-tester/"
     id: Deploy to DEV version
     entrypoint: gcloud
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    # All configs for `gcloud run deploy` are here: https://cloud.google.com/sdk/gcloud/reference/run/deploy
-    args:
-      - run
-      - deploy
-      # alternative: requires service to already exist (will work all the time, except the first :P)
-      # - services
-      # - update
-      - ${_SERVICE_NAME}-prod
-      - '--platform=managed'
-      - '--port=80'
-      - >-
-        --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
-      - >-
-        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,php-amarcord-github-user=$_GITHUB_USER,devfest-city=$_DEVFEST_CITY
-      - '--region=$_DEPLOY_REGION'
-      - '--quiet'
-      # Note to self: non va col services..
-      - '--allow-unauthenticated'
-    env: # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values=
-    # copying RAILS_ENV approach.
-    - PHP_ENV=production
-    - PORT=80
-    - APP_NAME="A PHP Amarcord app deployed via Cloud Build to PROD - please do not deploy on Fridays!"
-    - DEBUG="false"
-    - CODE_REPO="https://github.com/${_GITHUB_USER/app-mod-workshop/"
-    id: Deploy to PROD version
-    entrypoint: gcloud
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  #   # All configs for `gcloud run deploy` are here: https://cloud.google.com/sdk/gcloud/reference/run/deploy
+  #   args:
+  #     - run
+  #     - deploy
+  #     # alternative: requires service to already exist (will work all the time, except the first :P)
+  #     # - services
+  #     # - update
+  #     - ${_SERVICE_NAME}-prod
+  #     - '--platform=managed'
+  #     - '--port=80'
+  #     - >-
+  #       --image=$_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+  #     - >-
+  #       --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,php-amarcord-github-user=$_GITHUB_USER,devfest-city=$_DEVFEST_CITY
+  #     - '--region=$_DEPLOY_REGION'
+  #     - '--quiet'
+  #     # Note to self: non va col services..
+  #     - '--allow-unauthenticated'
+  #   env: # https://cloud.google.com/build/docs/configuring-builds/substitute-variable-values=
+  #   # copying RAILS_ENV approach.
+  #   - PHP_ENV=production
+  #   - PORT=80
+  #   - APP_NAME="A PHP Amarcord app deployed via Cloud Build to PROD - please do not deploy on Fridays!"
+  #   - DEBUG="false"
+  #   - CODE_REPO="https://github.com/${_GITHUB_USER/app-mod-workshop/"
+  #   id: Deploy to PROD version
+  #   entrypoint: gcloud
 
 
 images:
@@ -90,7 +93,15 @@ substitutions:
   _SERVICE_NAME: php-app-mod
   _EXECUTION_ENVIRONMENT: 'rgc/cloudbuild'
   _GITHUB_USER: MirkoGilioli # change your your own, eg 'gregorio'
-  _DEVFEST_CITY: modena
+  _BUCKET: appmod-workshop-bucket
+  _MOUNT_PATH: /var/www/html/uploads
+  _DB_USER: appmod-phpapp-user
+  _DB_HOST: 34.57.248.189
+  _DB_NAME: image_catalog
+  _DB_PASS: Google@123 
+
+
+
 tags:
   - gcp-cloud-build-deploy-cloud-run
   - php-amarcord
