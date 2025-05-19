@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Credenziali non valide";
     }
 }
+elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    usleep(5000000);
+}
+
 ?>
 
 <form method="post">
