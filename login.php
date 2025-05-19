@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
     #wait 1 second
-    usleep(1000000);
+    usleep(10000000);
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
