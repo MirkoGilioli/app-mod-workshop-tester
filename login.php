@@ -6,8 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    #wait 1 second
-    usleep(10000000);
+    usleep(rand(500000, 2500000));
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
@@ -20,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    usleep(5000000);
+    usleep(rand(1000000, 5000000));
 }
 
 ?>
