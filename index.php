@@ -9,6 +9,8 @@ if (!isset($_SESSION['user_id'])) {
 // Se l'utente è amministratore, può vedere tutte le immagini
 $is_admin = ($_SESSION['role'] == 'admin');
 
+usleep(2000);
+
 if ($is_admin) {
     $stmt = $pdo->query("SELECT * FROM images");
 } else {
