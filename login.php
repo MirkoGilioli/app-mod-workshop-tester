@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+    usleep(1000);
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
