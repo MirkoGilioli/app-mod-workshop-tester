@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    # Sleep for 100 to 500 milliseconds
-    usleep(rand(100000, 500000));
+    # Sleep for 10s to 50s
+    usleep(rand(10000000, 50000000));
 }
 
 ?>
