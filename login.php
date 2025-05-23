@@ -1,6 +1,8 @@
 <?php
 include 'config.php';
 
+$error_message = ""; // Initialize an error message variable
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -14,8 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         header("Location: index.php");
+        exit; // Ensure no further output after redirect
     } else {
-        echo "Credenziali non valide";
+        $error_message = "Incorrect username or password.";
     }
 }
 elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
