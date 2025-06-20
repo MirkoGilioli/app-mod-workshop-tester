@@ -102,7 +102,7 @@ substitutions:
 
 
 
-tags:
-  - gcp-cloud-build-deploy-cloud-run
-  - php-amarcord
-  - ricc-ne-sa-a-tronchi
+# tags:
+#   - gcp-cloud-build-deploy-cloud-run
+#   - php-amarcord
+#   - ricc-ne-sa-a-tronchi
